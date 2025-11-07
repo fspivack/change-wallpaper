@@ -15,7 +15,7 @@
 PARENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 # Find config file
-if [ -z "$XDG_CONFIG_HOME" ]; then
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
     CWP_CONFIG_FILE="$HOME/.config/change-wallpaper/config"
 else
     CWP_CONFIG_FILE="$XDG_CONFIG_HOME/change-wallpaper/config"
@@ -28,7 +28,7 @@ fi
 source "$CWP_CONFIG_FILE"
 
 # Define the state file, using XDG standard
-if [ -z "$XDG_STATE_HOME" ]; then
+if [[ -z "$XDG_STATE_HOME" ]]; then
     CWP_STATE_HOME="$HOME/.local/state/change-wallpaper"
 else
     CWP_STATE_HOME="$XDG_STATE_HOME/change-wallpaper"
@@ -39,7 +39,7 @@ mkdir -p "$CWP_STATE_HOME"
 STATE_FILE="$CWP_STATE_HOME/.current_wallpaper_state"
 
 # Default state if file doesn't exist
-if [ ! -f "$STATE_FILE" ]; then
+if [[ ! -f "$STATE_FILE" ]]; then
     echo "0" > "$STATE_FILE"
 fi
 
@@ -95,15 +95,15 @@ set_lxde_wallpaper() {
 
 detect_desktop_env() {
     # Detect which desktop environment we're in
-    if [ -n "$XDG_CURRENT_DESKTOP" ]; then
+    if [[ -n "$XDG_CURRENT_DESKTOP" ]]; then
         printf "%s" "$XDG_CURRENT_DESKTOP"
-    elif [ -n "$DESKTOP_SESSION" ]; then
+    elif [[ -n "$DESKTOP_SESSION" ]]; then
         printf "%s" "$DESKTOP_SESSION"
-    elif [ -n "$GNOME_DESKTOP_SESSION_ID" ]; then
+    elif [[ -n "$GNOME_DESKTOP_SESSION_ID" ]]; then
         printf "GNOME"
-    elif [ -n "$MATE_DESKTOP_SESSION_ID" ]; then
+    elif [[ -n "$MATE_DESKTOP_SESSION_ID" ]]; then
         printf "MATE"
-    elif [ -n "$KDE_FULL_SESSION" ]; then
+    elif [[ -n "$KDE_FULL_SESSION" ]]; then
         printf "KDE"
     else
         # Not found - assuming GNOME, as it's the most popular

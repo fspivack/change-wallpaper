@@ -38,7 +38,7 @@ chmod u+x "$EXEC_FILE"
 chmod u+x "$HOME/.local/share/applications/cwp.desktop"
 
 # Find appropriate directory to put config in
-if [ -z "$XDG_CONFIG_HOME" ]; then
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
     CWP_CONFIG_DIR="$HOME/.config/change-wallpaper"
 else
     CWP_CONFIG_DIR="$XDG_CONFIG_HOME/change-wallpaper"
@@ -59,7 +59,7 @@ config_file="\
 # )
 "
 
-if [ -f "$CWP_CONFIG_FILE" ]; then
+if [[ -f "$CWP_CONFIG_FILE" ]]; then
     # Config file exists - ask user for confirmation of overwrite
     printf "Config file already exists\n"
     read -p "Overwrite? (y/N) " yn
