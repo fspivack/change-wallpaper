@@ -14,11 +14,6 @@
 # Get directory of this script (otherwise it looks in user's current directory)
 PARENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-# Not following XDG standard for config file location, because it would make it
-# too complicated for the user
-#CONFIG_FILE="${PARENT_DIR}/cwp-config"
-#CONFIG_FILE="/home/fs462/bin/change-wallpaper/cwp-config"
-
 # Find config file
 if [ -z "$XDG_CONFIG_HOME" ]; then
     CWP_CONFIG_FILE="$HOME/.config/change-wallpaper/config"
@@ -55,9 +50,6 @@ numwallpapers="${#WALLPAPERS[@]}"
 # Get next wallpaper number, using modular arithmetic
 (( next_state = ( CURRENT_STATE + 1 ) % numwallpapers ))
 new_wallpaper="${WALLPAPERS[$next_state]}"
-# # Change wallpaper
-# # dconf write /org/mate/desktop/background/picture-filename "'$new_wallpaper'"
-# gsettings set org.mate.background picture-filename "$new_wallpaper"
 
 # Functions to change wallpaper depending on desktop environment
 # The argument in each case is the filename

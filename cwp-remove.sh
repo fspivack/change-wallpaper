@@ -3,6 +3,10 @@
 # Copyright (c) 2025 Francesca Spivack
 # Licensed under the MIT License: https://opensource.org/licenses/MIT
 
+# Remove 'change-wallpaper' program by removing the '.desktop' file from the
+# Applications menu and removing the directory containing the state file
+
+
 DESKTOP_FILE="$HOME/.local/share/applications/cwp.desktop"
 
 if [[ -f "$DESKTOP_FILE" ]]; then

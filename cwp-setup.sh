@@ -3,8 +3,9 @@
 # Copyright (c) 2025 Francesca Spivack
 # Licensed under the MIT License: https://opensource.org/licenses/MIT
 
-# todo: Re-write the following:
-# Create desktop icon so that you can change wallpaper by clicking
+# Set up 'change-wallpaper' program, by creating a '.desktop' file in the
+# Appplications menu, as well as writing the config file
+
 
 PARENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
