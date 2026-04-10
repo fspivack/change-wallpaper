@@ -46,17 +46,23 @@ fi
 mkdir -p "$CWP_CONFIG_DIR"
 CWP_CONFIG_FILE="$CWP_CONFIG_DIR/config"
 
+# config_file="\
+# #!/bin/bash
+
+# # Uncomment the following, and replace the paths with the paths to your
+# # own wallpaper files
+
+# # WALLPAPERS=(
+# #     \"$HOME/Pictures/nonwork.jpg\"
+# #     \"$HOME/Pictures/work.jpg\"
+# #     \"$HOME/Pictures/third-wp.jpg\"
+# # )
+# "
+
 config_file="\
-#!/bin/bash
-
-# Uncomment the following, and replace the paths with the paths to your
-# own wallpaper files
-
-# WALLPAPERS=(
-#     \"$HOME/Pictures/nonwork.jpg\"
-#     \"$HOME/Pictures/work.jpg\"
-#     \"$HOME/Pictures/third-wp.jpg\"
-# )
+$HOME/Pictures/nonwork.jpg
+$HOME/Pictures/work.jpg
+$HOME/Pictures/third-wallpaper.jpg
 "
 
 if [[ -f "$CWP_CONFIG_FILE" ]]; then

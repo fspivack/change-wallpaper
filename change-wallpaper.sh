@@ -20,12 +20,6 @@ if [[ -z "$XDG_CONFIG_HOME" ]]; then
 else
     CWP_CONFIG_FILE="$XDG_CONFIG_HOME/change-wallpaper/config"
 fi
-if [[ ! -f "$CWP_CONFIG_FILE" ]]; then
-    printf "ERROR: Config file '%s' not found\n" "$CONFIG_FILE" >&2
-    printf "Run 'cwp-make-shortcut.sh' to create config, then edit it" >&2
-    exit 1
-fi
-source "$CWP_CONFIG_FILE"
 
 # Define the state file, using XDG standard
 if [[ -z "$XDG_STATE_HOME" ]]; then
@@ -37,11 +31,31 @@ mkdir -p "$CWP_STATE_HOME"
 
 # Path to a tiny state file
 STATE_FILE="$CWP_STATE_HOME/.current_wallpaper_state"
+ERROR_LOG="$CWP_STATE_FILE/error.log"
 
 # Default state if file doesn't exist
 if [[ ! -f "$STATE_FILE" ]]; then
     echo "0" > "$STATE_FILE"
 fi
+
+load_config() {
+    if [[ ! -f "$CWP_CONFIG_FILE" ]]; then
+        printf "ERROR: Config file '%s' not found\n" "$CONFIG_FILE" >&2
+        printf "Run 'cwp-setup.sh' to create config, then edit it" >&2
+        exit 1
+    fi
+    
+    # Check if it's the old Bash style config
+    if grep -q "WALLPAPERS=(" "$CWP_CONFIG_FILE"; then
+        source "$CWP_CONFIG_FILE"
+        readonly WALLPAPERS
+    else
+        # New text format
+        mapfile -t WALLPAPERS < <(grep -v '^#' "$CWP_CONFIG_FILE" | grep -v '^$')
+    fi
+}
+
+load_config
 
 CURRENT_STATE=$(cat "$STATE_FILE")
 
