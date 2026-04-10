@@ -31,17 +31,37 @@ mkdir -p "$CWP_STATE_HOME"
 
 # Path to a tiny state file
 STATE_FILE="$CWP_STATE_HOME/.current_wallpaper_state"
-ERROR_LOG="$CWP_STATE_FILE/error.log"
+ERROR_LOG="$CWP_STATE_HOME/error.log"
 
 # Default state if file doesn't exist
 if [[ ! -f "$STATE_FILE" ]]; then
     echo "0" > "$STATE_FILE"
 fi
 
+log_error() {
+    # Log error to file and also to stderr
+    local msg="$1"
+    local timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+
+    # Use $2 if it exists, otherwise "ERROR"
+    # Do this so that we can specify, e.g., "WARNING" rather than "ERROR"
+    local loglevel="${2:-ERROR}"
+    
+    # Send to stderr
+    printf "%s: %s\n" "$loglevel" "$msg" >&2
+    
+    # Send to the log state file with a timestamp
+    printf "[%s] %s: %s\n" "$timestamp" "$loglevel" "$msg" >> "$ERROR_LOG"
+}
+print_hint() {
+    # Only prints to stderr
+    printf "%s\n" "$1" >&2
+}
+
 load_config() {
     if [[ ! -f "$CWP_CONFIG_FILE" ]]; then
-        printf "ERROR: Config file '%s' not found\n" "$CONFIG_FILE" >&2
-        printf "Run 'cwp-setup.sh' to create config, then edit it" >&2
+        log_error "Config file '$CWP_CONFIG_FILE' not found" "WARNING"
+        print_hint "Run 'cwp-setup.sh' to create config, then edit it"
         exit 1
     fi
     
