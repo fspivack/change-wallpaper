@@ -70,6 +70,9 @@ load_config() {
     fi
 }
 
+# Functions to change wallpaper depending on desktop environment
+# The argument in each case is the filename
+
 set_mate_wallpaper() {
     gsettings set org.mate.background picture-filename "$1"
 }
@@ -141,14 +144,20 @@ main() {
 
     # Get number of wallpapers, so as to loop through them
     numwallpapers="${#WALLPAPERS[@]}"
+    if [[ "$numwallpapers" -eq 0 ]]; then
+        log_error "No wallpapers specified in config"
+        return 1
+    fi
     # Get next wallpaper number, using modular arithmetic
     # Note that if something's gone wrong and the state file exists but is
     # blank, this will just give "1"
     (( next_state = ( CURRENT_STATE + 1 ) % numwallpapers ))
     new_wallpaper="${WALLPAPERS[$next_state]}"
 
-    # Functions to change wallpaper depending on desktop environment
-    # The argument in each case is the filename
+    if [[ ! -f "$new_wallpaper" ]]; then
+        log_error "File '$new_wallpaper' does not exist"
+        return 1
+    fi
     
     # Here we get the desktop environment and make it lower-case for consistency
     DE=$(detect_desktop_env  | tr '[:upper:]' '[:lower:]')
