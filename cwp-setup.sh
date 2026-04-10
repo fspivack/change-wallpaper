@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2025 Francesca Spivack
+# Copyright (c) 2025-2026 Francesca Spivack
 # Licensed under the MIT License: https://opensource.org/licenses/MIT
 
 # Set up 'change-wallpaper' program, by creating a '.desktop' file in the

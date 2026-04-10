@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 2025 Francesca Spivack
+# Copyright (c) 2025-2026 Francesca Spivack
 # Licensed under the MIT License: https://opensource.org/licenses/MIT
 
 # If you want to have this available at the touch of a button, pin this to the
@@ -134,7 +134,7 @@ main() {
     if [[ ! -f "$STATE_FILE" ]]; then
         echo "0" > "$STATE_FILE"
     fi
-    
+
     load_config || return 1
 
     CURRENT_STATE=$(cat "$STATE_FILE")
