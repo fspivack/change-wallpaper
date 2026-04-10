@@ -132,7 +132,7 @@ main() {
 
     # Default state if file doesn't exist
     if [[ ! -f "$STATE_FILE" ]]; then
-        echo "0" > "$STATE_FILE"
+        printf "0" > "$STATE_FILE"
     fi
 
     load_config || return 1
@@ -179,7 +179,7 @@ main() {
     esac
 
     # Change state in file
-    echo "$next_state" > "$STATE_FILE"
+    printf "%s" "$next_state" > "$STATE_FILE"
 }
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     main
