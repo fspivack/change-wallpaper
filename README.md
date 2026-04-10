@@ -29,18 +29,14 @@ You first navigate to the change-wallpaper directory, and run
 
 ### Edit your config file
 
-The config file is:
-```bash
-#!/bin/bash
-
-# WALLPAPERS=(
-#     \"$HOME/Pictures/nonwork.jpg\"
-#     \"$HOME/Pictures/work.jpg\"
-#     \"$HOME/Pictures/third-wp.jpg\"
-# )
+The default config file is:
+```
+$HOME/Pictures/nonwork.jpg
+$HOME/Pictures/work.jpg
+$HOME/Pictures/third-wallpaper.jpg
 ```
 
-You should uncomment the WALLPAPERS variable (i.e. all lines apart from `#!/bin/bash`), and replace the file paths with the paths to your own wallpaper files.
+You should replace the default file names with your actual file names. You can add as many as you want, and as few as you want (as long as there's at least one).
 
 ### Add the launcher to the panel
 
