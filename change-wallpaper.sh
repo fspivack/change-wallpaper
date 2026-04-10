@@ -27,16 +27,11 @@ if [[ -z "$XDG_STATE_HOME" ]]; then
 else
     CWP_STATE_HOME="$XDG_STATE_HOME/change-wallpaper"
 fi
-mkdir -p "$CWP_STATE_HOME"
 
 # Path to a tiny state file
 STATE_FILE="$CWP_STATE_HOME/.current_wallpaper_state"
+# Path to error log (in state directory)
 ERROR_LOG="$CWP_STATE_HOME/error.log"
-
-# Default state if file doesn't exist
-if [[ ! -f "$STATE_FILE" ]]; then
-    echo "0" > "$STATE_FILE"
-fi
 
 log_error() {
     # Log error to file and also to stderr
@@ -60,9 +55,9 @@ print_hint() {
 
 load_config() {
     if [[ ! -f "$CWP_CONFIG_FILE" ]]; then
-        log_error "Config file '$CWP_CONFIG_FILE' not found" "WARNING"
+        log_error "Config file '$CWP_CONFIG_FILE' not found"
         print_hint "Run 'cwp-setup.sh' to create config, then edit it"
-        exit 1
+        return 1
     fi
     
     # Check if it's the old Bash style config
@@ -74,19 +69,6 @@ load_config() {
         mapfile -t WALLPAPERS < <(grep -v '^#' "$CWP_CONFIG_FILE" | grep -v '^$')
     fi
 }
-
-load_config
-
-CURRENT_STATE=$(cat "$STATE_FILE")
-
-# Get number of wallpapers, so as to loop through them
-numwallpapers="${#WALLPAPERS[@]}"
-# Get next wallpaper number, using modular arithmetic
-(( next_state = ( CURRENT_STATE + 1 ) % numwallpapers ))
-new_wallpaper="${WALLPAPERS[$next_state]}"
-
-# Functions to change wallpaper depending on desktop environment
-# The argument in each case is the filename
 
 set_mate_wallpaper() {
     gsettings set org.mate.background picture-filename "$1"
@@ -145,33 +127,63 @@ detect_desktop_env() {
     fi
 }
 
-# Here we get the desktop environment and make it lower-case for consistency
-DE=$(detect_desktop_env  | tr '[:upper:]' '[:lower:]')
+main() {
+    mkdir -p "$CWP_STATE_HOME"
 
-case "$DE" in
-    *mate*)
-        set_mate_wallpaper "$new_wallpaper"
-        ;;
-    *gnome*|*cinnamon*|*unity*)
-        set_gnome_wallpaper "$new_wallpaper"
-        ;;
-    *kde*|*plasma*)
-        set_kde_wallpaper "$new_wallpaper"
-        ;;
-    *xfce*)
-        set_xfce_wallpaper "$new_wallpaper"
-        ;;
-    *lxqt*)
-        set_lxqt_wallpaper "$new_wallpaper"
-        ;;
-    *lxde*)
-        set_lxde_wallpaper "$new_wallpaper"
-        ;;
-    *)
-        printf "Unknown desktop environment. Defaulting to GNOME\n" >&2
-        set_gnome_wallpaper "$new_wallpaper"
-        ;;
-esac
+    # Default state if file doesn't exist
+    if [[ ! -f "$STATE_FILE" ]]; then
+        echo "0" > "$STATE_FILE"
+    fi
+    
+    load_config || return 1
 
-# Change state in file
-echo "$next_state" > "$STATE_FILE"
+    CURRENT_STATE=$(cat "$STATE_FILE")
+
+    # Get number of wallpapers, so as to loop through them
+    numwallpapers="${#WALLPAPERS[@]}"
+    # Get next wallpaper number, using modular arithmetic
+    # Note that if something's gone wrong and the state file exists but is
+    # blank, this will just give "1"
+    (( next_state = ( CURRENT_STATE + 1 ) % numwallpapers ))
+    new_wallpaper="${WALLPAPERS[$next_state]}"
+
+    # Functions to change wallpaper depending on desktop environment
+    # The argument in each case is the filename
+    
+    # Here we get the desktop environment and make it lower-case for consistency
+    DE=$(detect_desktop_env  | tr '[:upper:]' '[:lower:]')
+
+    case "$DE" in
+        *mate*)
+            set_mate_wallpaper "$new_wallpaper"
+            ;;
+        *gnome*|*cinnamon*|*unity*)
+            set_gnome_wallpaper "$new_wallpaper"
+            ;;
+        *kde*|*plasma*)
+            set_kde_wallpaper "$new_wallpaper"
+            ;;
+        *xfce*)
+            set_xfce_wallpaper "$new_wallpaper"
+            ;;
+        *lxqt*)
+            set_lxqt_wallpaper "$new_wallpaper"
+            ;;
+        *lxde*)
+            set_lxde_wallpaper "$new_wallpaper"
+            ;;
+        *)
+            printf "Unknown desktop environment. Defaulting to GNOME\n" >&2
+            set_gnome_wallpaper "$new_wallpaper"
+            ;;
+    esac
+
+    # Change state in file
+    echo "$next_state" > "$STATE_FILE"
+}
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main
+    exit $?
+else
+    main
+fi
